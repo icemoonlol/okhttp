@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 /**
  * An HTTP request. Instances of this class are immutable if their {@link #body}
@@ -177,6 +178,33 @@ public final class Request {
       return url(parsed);
     }
 
+
+    /**
+     * Sets the URL target of this request.
+     *
+     * @throws IllegalArgumentException if the scheme of {@code url} is not {@code http} or {@code
+     *     https}.
+     */
+    public Builder url(Object url) {
+      if (url == null) throw new IllegalArgumentException("url == null");
+
+      HttpUrl parsed = null;
+      if(url instanceof String){
+        parsed = HttpUrl.parse((String)url);
+      } else if(url instanceof URL){
+        parsed = HttpUrl.get((URL)url);
+      } else if(url instanceof HttpUrl){
+        parsed = (HttpUrl)url;
+      } else if(url instanceof Urlable){
+        parsed = HttpUrl.parse(((Urlable) url).getUrl());
+      }else{
+        parsed = HttpUrl.parse(url.toString());
+      }
+
+      if (parsed == null) throw new IllegalArgumentException("unexpected url: " + url);
+      return this;
+    }
+
     /**
      * Sets the header named {@code name} to {@code value}. If this request
      * already has any headers with that name, they are all replaced.
@@ -203,6 +231,14 @@ public final class Request {
     /** Removes all headers on this builder and adds {@code headers}. */
     public Builder headers(Headers headers) {
       this.headers = headers.newBuilder();
+      return this;
+    }
+
+    public Builder addHeaders(Map<String, String> map) {
+      if(map == null || map.isEmpty()) return this;
+      for (Map.Entry<String, String> entry: map.entrySet()) {
+        headers.add(entry.getKey(), entry.getValue());
+      }
       return this;
     }
 

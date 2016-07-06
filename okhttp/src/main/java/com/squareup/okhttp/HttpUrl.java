@@ -598,6 +598,25 @@ public final class HttpUrl {
   }
 
   /**
+   * Returns a new {@code HttpUrl} representing {@code url} if it is a well-formed HTTP or HTTPS
+   * URL, or null if it isn't.
+   */
+  public static HttpUrl parseRaw(String url) {
+    if(url == null || url.length() <= 0) return null;
+
+    // Silently replace websocket URLs with HTTP URLs.
+    if (url.regionMatches(true, 0, "ws:", 0, 3)) {
+      url = "http:" + url.substring(3);
+    } else if (url.regionMatches(true, 0, "wss:", 0, 4)) {
+      url = "https:" + url.substring(4);
+    }
+
+    Builder builder = new Builder();
+    Builder.ParseResult result = builder.parse(null, url);
+    return result == Builder.ParseResult.SUCCESS ? builder.build() : null;
+  }
+
+  /**
    * Returns an {@link HttpUrl} for {@code url} if its protocol is {@code http} or {@code https}, or
    * null if it has any other protocol.
    */
