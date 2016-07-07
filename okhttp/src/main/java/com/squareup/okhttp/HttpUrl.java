@@ -1396,7 +1396,7 @@ public final class HttpUrl {
     /**
      * Performs IDN ToASCII encoding and canonicalize the result to lowercase. e.g. This converts
      * {@code ☃.net} to {@code xn--n3h.net}, and {@code WwW.GoOgLe.cOm} to {@code www.google.com}.
-     * {@code null} will be returned if the input cannot be ToASCII encoded or if the result
+     * {@code null} will be returned if the input cannot be To ASCII encoded or if the result
      * contains unsupported ASCII characters.
      */
     private static String domainToAscii(String input) {
@@ -1404,7 +1404,7 @@ public final class HttpUrl {
         String result = IDN.toASCII(input).toLowerCase(Locale.US);
         if (result.isEmpty()) return null;
 
-        // Confirm that the IDN ToASCII result doesn't contain any illegal characters.
+        // Confirm that the IDN To ASCII result doesn't contain any illegal characters.
         if (containsInvalidHostnameAsciiCodes(result)) {
           return null;
         }
